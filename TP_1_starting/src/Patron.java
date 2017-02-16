@@ -4,7 +4,7 @@ public class Patron
 {
 	private String name;
 	private String patronID;
-	private ArrayList<Copy> copiesOut;
+	private ArrayList<Copy> copiesOut; //change1
 
 	public Patron(String n, String id)
 	{
