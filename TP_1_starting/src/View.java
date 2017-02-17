@@ -1,16 +1,11 @@
 
 public class View {
-	private static View viewInstance = new View();
+	private UserInputProcessor userInputProssor;
 	public static final int DISPLAY_SUCCESS = 1;
 	public static final int DISPLAY_FAIL = 2;
-	private View(){}
 	
-	public static View getInstance(){
-		if(null == viewInstance){
-			viewInstance = new View();
-		}
-		
-		return viewInstance;
+	public void bindUserInputProcessor(UserInputProcessor prossor){
+		this.userInputProssor = prossor;
 	}
 	
 	public int showMainScreen()
@@ -18,9 +13,19 @@ public class View {
 		return 1;
 	}
 	
+	private void captureMainScreenInput()
+	{
+		
+	}
+	
 	public int showIdScanningScreen()
 	{
 		return 1;
+	}
+	
+	private void captureIdScanningScreenInput()
+	{
+		
 	}
 	
 	public int showIdTypingScreen()
@@ -29,8 +34,44 @@ public class View {
 		
 	}
 	
+	private void captureIdTypingScreenInput()
+	{
+		
+	}
+	
 	public int showCopyScanningScreen()
 	{
 		return 1;
 	}
+	
+	private void captureCopyScanningScreenInput()
+	{
+		
+	}
+	
+	public int showCopyTypingScreen()
+	{
+		return 1;
+	}
+	
+	private void captureCopyTypingScreenInput()
+	{
+		
+	}
+	
+	public int showRecordScreen()
+	{
+		return 1;
+	}
+	
+	private void captureRecordScreenInput()
+	{
+		
+	}
+	
+	public int showCheckOutComplete()
+	{
+		return 1;
+	}
+	
 }
