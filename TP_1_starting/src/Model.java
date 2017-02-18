@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Model {
 	public static final int SUCCESS = 1;
@@ -34,6 +35,7 @@ public class Model {
 		return 0;
 		
 	}
+	
 }
 
 class Storage{
@@ -42,6 +44,7 @@ class Storage{
 	
 	private Storage()
 	{
+		storedData = new ArrayList<Patron>();
 		initializeDemoData();
 	}
 	public static Storage getInstance()
@@ -91,12 +94,13 @@ class Storage{
 	public void updateData(Patron latestData)
 	{
 		try{
-			while(storedData.iterator().hasNext() == true)
+			Iterator<Patron> dataIterator = storedData.iterator();
+			while(dataIterator.hasNext() == true)
 			{
-				Patron tempPatron = storedData.iterator().next();
+				Patron tempPatron = dataIterator.next();
 				if(tempPatron.getPatronID().matches(latestData.getPatronID()))
 				{
-					storedData.iterator().remove();
+					dataIterator.remove();
 					break;
 				}
 			}
