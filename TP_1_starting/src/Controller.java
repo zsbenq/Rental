@@ -1,22 +1,44 @@
 
 public class Controller implements UserInputProcessor {
+	private View view;
+	private Model model;
 
 	@Override
 	public void selectCheckIn() {
-		// TODO Auto-generated method stub
+		try{
+			if(view != null)
+			{
+				view.showCopyScanningScreen();
+			}
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
 		
 	}
 
 	@Override
 	public void selectCheckOut() {
-		// TODO Auto-generated method stub
+		try{
+			if(view != null)
+			{
+				view.showIdScanningScreen();
+			}
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
 		
 	}
 
 	@Override
 	public void selectViewPatronRecord() {
-		// TODO Auto-generated method stub
-		
+		try{
+			if(view != null)
+			{
+				view.showIdScanningScreen();
+			}
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
 	}
 
 	@Override
@@ -54,5 +76,34 @@ public class Controller implements UserInputProcessor {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	private void initializeApplication()
+	{
+		try{
+			this.view = new View(); 
+			this.model = new Model();
+			view.bindUserInputProcessor(this);
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
+	}
+	
+	private void start()
+	{
+		try{
+			if(this.view != null)
+			{
+				this.view.showMainScreen();
+			}
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
+	}
 
+	public static void main(String[] args)
+	{
+		Controller controller = new Controller();
+		controller.initializeApplication();
+		controller.start();
+	}
 }

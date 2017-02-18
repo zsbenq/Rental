@@ -1,7 +1,7 @@
 
 public class Record {
-	private Copy copy;
-	private int dueTime;
+	private Copy copy = null;
+	private int dueTime = 0;
 	
 	public Copy getCopy() {
 		return copy;
