@@ -6,7 +6,7 @@ public class Model {
 	public static final int FAIL = 0;
 	public Patron getPatronbyId(String id)
 	{
-		ArrayList<Patron> patronsInStorage = Storage.getInstance().getData();
+		ArrayList<Patron> patronsInStorage = Storage.getInstance().getAllPatrons();
 		//TODO implementation
 		return null;
 		
@@ -14,7 +14,7 @@ public class Model {
 	
 	public Copy getCopybyId(String id)
 	{
-		ArrayList<Patron> patronsInStorage = Storage.getInstance().getData();
+		ArrayList<Copy> copiesInStorage = Storage.getInstance().getAllCopies();
 		//TODO implementation
 		return null;
 		
@@ -23,7 +23,7 @@ public class Model {
 	public int updatePatron(Patron uptodatePatron)
 	{
 		try{
-			Storage.getInstance().updateData(uptodatePatron);
+			Storage.getInstance().addPatrontoStorage(uptodatePatron);
 			return SUCCESS;
 		}catch(Exception e){
 			return FAIL;
@@ -32,6 +32,7 @@ public class Model {
 	
 	public int calculateDueTime()
 	{
+		//TODO
 		return 0;
 		
 	}
@@ -40,11 +41,13 @@ public class Model {
 
 class Storage{
 	private static Storage instance = new Storage();
-	private ArrayList<Patron> storedData; 
+	private ArrayList<Patron> storedPatrons;
+	private ArrayList<Copy> storedCopies;
 	
 	private Storage()
 	{
-		storedData = new ArrayList<Patron>();
+		storedPatrons = new ArrayList<Patron>();
+		storedCopies = new ArrayList<Copy>();
 		initializeDemoData();
 	}
 	public static Storage getInstance()
@@ -86,32 +89,58 @@ class Storage{
 		recordDemoforOld.setCopy(copyDemoOld);
 		recordDemoforOld.setDueTime(0);
 		
-		updateData(patronDemoNew);
-		updateData(patronDemoOld);
+		addCopytoStorage(copyDemoNew);
+		addCopytoStorage(copyDemoOld);
+		addPatrontoStorage(patronDemoNew);
+		addPatrontoStorage(patronDemoOld);
 		
 	}
 	
-	public void updateData(Patron latestData)
+	private void addCopytoStorage(Copy newCopy)
 	{
 		try{
-			Iterator<Patron> dataIterator = storedData.iterator();
-			while(dataIterator.hasNext() == true)
+			Iterator<Copy> copyIterator = storedCopies.iterator();
+			while(copyIterator.hasNext() == true)
 			{
-				Patron tempPatron = dataIterator.next();
-				if(tempPatron.getPatronID().matches(latestData.getPatronID()))
+				Copy tempCopy = copyIterator.next();
+				if(tempCopy.getCopyID().matches(newCopy.getCopyID()))
 				{
-					dataIterator.remove();
+					copyIterator.remove();
 					break;
 				}
 			}
-			storedData.add(latestData);
+			storedCopies.add(newCopy);
 		}catch(Exception e){
 			System.err.println(e.getMessage());
 		}
 	}
 	
-	public ArrayList<Patron> getData()
+	public ArrayList<Copy> getAllCopies()
 	{
-		return storedData;
+		return storedCopies;
+	}
+	
+	public void addPatrontoStorage(Patron newPatron)
+	{
+		try{
+			Iterator<Patron> patronIterator = storedPatrons.iterator();
+			while(patronIterator.hasNext() == true)
+			{
+				Patron tempPatron = patronIterator.next();
+				if(tempPatron.getPatronID().matches(newPatron.getPatronID()))
+				{
+					patronIterator.remove();
+					break;
+				}
+			}
+			storedPatrons.add(newPatron);
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
+	}
+	
+	public ArrayList<Patron> getAllPatrons()
+	{
+		return storedPatrons;
 	}
 }
