@@ -6,7 +6,7 @@ public interface UserInputProcessor {
 	public void scanIdCard(Object scanner);
 	public void typeIdNumber(String idNumber);
 	public void scanCopy(Object scanner);
-	public void typeCopyISBN(String copyISBN);
+	public void typeCopyId(String copyId);
 	public void removeCopyFromCheckOut(int copyNumber);
 	public void completeCheckOut();
 }

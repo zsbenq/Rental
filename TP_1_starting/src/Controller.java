@@ -2,12 +2,17 @@
 public class Controller implements UserInputProcessor {
 	private View view;
 	private Model model;
+	private static int CHECKOUTPROCESS = 1;
+	private static int CHECKINPROCESS = 2;
+	private static int VIEWRECORDPROCESS = 3;
+	private int currentProcess = 0;
 
 	@Override
 	public void selectCheckIn() {
 		try{
 			if(view != null)
 			{
+				currentProcess = CHECKINPROCESS;
 				view.showCopyScanningScreen();
 			}
 		}catch(Exception e){
@@ -21,6 +26,7 @@ public class Controller implements UserInputProcessor {
 		try{
 			if(view != null)
 			{
+				currentProcess = CHECKOUTPROCESS;
 				view.showIdScanningScreen();
 			}
 		}catch(Exception e){
@@ -34,6 +40,7 @@ public class Controller implements UserInputProcessor {
 		try{
 			if(view != null)
 			{
+				currentProcess = VIEWRECORDPROCESS;
 				view.showIdScanningScreen();
 			}
 		}catch(Exception e){
@@ -44,7 +51,6 @@ public class Controller implements UserInputProcessor {
 	@Override
 	public void scanIdCard(Object scanner) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -60,7 +66,7 @@ public class Controller implements UserInputProcessor {
 	}
 
 	@Override
-	public void typeCopyISBN(String copyISBN) {
+	public void typeCopyId(String copyId) {
 		// TODO Auto-generated method stub
 		
 	}
