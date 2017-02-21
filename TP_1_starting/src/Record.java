@@ -1,7 +1,8 @@
 
 public class Record {
 	private Copy copy = null;
-	private int dueTime = 0;
+	private long dueTime = 0;
+	private boolean isReturned = false;
 	
 	public Copy getCopy() {
 		return copy;
@@ -9,11 +10,18 @@ public class Record {
 	public void setCopy(Copy copy) {
 		this.copy = copy;
 	}
-	public int getDueTime() {
+	public long getDueTime() {
 		return dueTime;
 	}
-	public void setDueTime(int dueTime) {
+	public void setDueTime(long dueTime) {
 		this.dueTime = dueTime;
+	}
+	
+	public boolean isReturned() {
+		return isReturned;
+	}
+	public void setReturned(boolean isReturned) {
+		this.isReturned = isReturned;
 	}
 	
 }

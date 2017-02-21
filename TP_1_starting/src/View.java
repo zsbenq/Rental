@@ -4,12 +4,13 @@ import java.util.Iterator;
 public class View {
 	private UserInputProcessor userInputProcessor;
 	private static final int MINIMUMSECTION = 1;
+	private static final int MINUSLIMIT = -20;
 	private static final int MAXIMUMINPUTLENGTH = 20;
 	private static final int MAINSCREENSELECTIONS = 3;
 	private static final int IDSCANNINGSELECTIONS = 3;
 	private static final int COPYSCANNINGSELECTIONS = 3;
 	private static final int CHECKOUTSELECTIONS = 2;
-	private static final String SPlITLINE = "******************";
+	private static final String SPLITLINE = "******************";
 	
 	public void bindUserInputProcessor(UserInputProcessor processor){
 		this.userInputProcessor = processor;
@@ -18,6 +19,7 @@ public class View {
 	public void showMainScreen()
 	{
 		try{
+			StdOut.println(SPLITLINE+"Welcome"+SPLITLINE);
 			StdOut.println("Press '1' Check In");
 			StdOut.println("Press '2' Check Out");
 			StdOut.println("Press '3' Show Patron's Record");
@@ -31,7 +33,7 @@ public class View {
 	private void dispatchMainScreenProcessor()
 	{
 		try{
-			int userSelection = captureUserSelection(MAINSCREENSELECTIONS);
+			int userSelection = captureUserSelection(MAINSCREENSELECTIONS, false);
 			switch (userSelection){
 			case 1:
 				userInputProcessor.selectCheckIn();
@@ -57,8 +59,8 @@ public class View {
 		try{
 			StdOut.println("Scanning Id...");
 			StdOut.println("(Press '1' Simulate a successful scanning)");
-			StdOut.println("(Press '2' Simulate a failed scanning");
-			StdOut.println("(Press '3' Enter ID Number");
+			StdOut.println("(Press '2' Simulate a failed scanning)");
+			StdOut.println("(Press '3' Enter ID Number)");
 			
 			dispatchIdScanningProcessor();
 		}catch(Exception e){
@@ -69,7 +71,7 @@ public class View {
 	private void dispatchIdScanningProcessor()
 	{
 		try{
-			int userSelection = captureUserSelection(IDSCANNINGSELECTIONS);
+			int userSelection = captureUserSelection(IDSCANNINGSELECTIONS, false);
 			Scanner scanner = new Scanner();
 			switch (userSelection){
 			case 1:
@@ -112,7 +114,7 @@ public class View {
 			String inputId = captureUserInput();
 			if(inputId != null)
 			{
-				userInputProcessor.typeIdNumber(inputId);
+				userInputProcessor.typeIdCardNumber(inputId);
 			}
 			else
 			{
@@ -128,8 +130,8 @@ public class View {
 		try{
 			StdOut.println("Scanning Copy...");
 			StdOut.println("(Press '1' Simulate a successful scanning)");
-			StdOut.println("(Press '2' Simulate a failed scanning");
-			StdOut.println("(Press '3' Enter ISBN");
+			StdOut.println("(Press '2' Simulate a failed scanning)");
+			StdOut.println("(Press '3' Enter Copy id)");
 			
 			dispatchCopyScanningScreenProcessor();
 		}catch(Exception e){
@@ -140,7 +142,7 @@ public class View {
 	private void dispatchCopyScanningScreenProcessor()
 	{
 		try{
-			int userSelection = captureUserSelection(COPYSCANNINGSELECTIONS);
+			int userSelection = captureUserSelection(COPYSCANNINGSELECTIONS, false);
 			Scanner scanner = new Scanner();
 			switch (userSelection){
 			case 1:
@@ -195,10 +197,9 @@ public class View {
 	public void showPatronInfo(String patronName, String patronId)
 	{
 		try{
-			StdOut.println(SPlITLINE);
+			StdOut.println(SPLITLINE);
 			StdOut.println("name: " + patronName);
 			StdOut.println("id: " + patronId);
-			StdOut.println(SPlITLINE);
 		}catch(Exception e){
 			System.err.println(e.getMessage());
 		}
@@ -214,7 +215,7 @@ public class View {
 				while(recordIter.hasNext())
 				{
 					HistoryRecord tempRecord = recordIter.next();
-					StdOut.println(tempRecord.getCopyTitle()+"   "+tempRecord.getCopyId()+"   "+tempRecord.getDueDate());
+					StdOut.println("<"+tempRecord.getCopyTitle()+">   "+tempRecord.getCopyId()+" due "+tempRecord.getDueDate());
 				}
 			}
 			else
@@ -236,12 +237,12 @@ public class View {
 				while(itemIter.hasNext())
 				{
 					CheckOutItem tempItem = itemIter.next();
-					StdOut.println(tempItem.getItemNumber()+".   "+tempItem.getItemTitle()+"   "+tempItem.getItemAuthor());
+					StdOut.println(tempItem.getItemNumber()+".   <"+tempItem.getItemTitle()+">   "+tempItem.getItemAuthor());
 				}
 			}
 			else
 			{
-				StdOut.println("Error: [showHistoryRecords] parameter is null");
+				StdOut.println("Error: [showCheckOutItems] parameter is null");
 			}
 		}catch(Exception e){
 			System.err.println(e.getMessage());
@@ -253,6 +254,7 @@ public class View {
 		try{
 			StdOut.println("Press '1' to continue scan");
 			StdOut.println("Press '2' to complete check out");
+			StdOut.println("Input '-1' to remove item 1., '-2' to remove item 2, etc.");
 			
 			dispatchCheckOutOptionProcessor();
 		}catch(Exception e){
@@ -263,7 +265,7 @@ public class View {
 	private void dispatchCheckOutOptionProcessor()
 	{
 		try{
-			int userSelection = captureUserSelection(CHECKOUTSELECTIONS);
+			int userSelection = captureUserSelection(CHECKOUTSELECTIONS, true);
 			switch (userSelection){
 			case 1:
 				showCopyScanningScreen();
@@ -272,8 +274,15 @@ public class View {
 				userInputProcessor.completeCheckOut();
 				break;
 			default: 
-				StdOut.println("Error occured");
-				break;
+				{
+					if(userSelection < 0)
+					{
+						int removeNumber = userSelection * -1;
+						userInputProcessor.removeCopyFromCheckOut(removeNumber);
+					}
+					break;
+				}
+				
 			}
 		
 		}catch(Exception e){
@@ -281,14 +290,78 @@ public class View {
 		}
 	}
 	
-	private int captureUserSelection(int optionAmount)
+	public void showScanIdFailed()
 	{
 		try{
-			int userSelection = StdIn.readInt();
-			while(userSelection < MINIMUMSECTION || userSelection > optionAmount)
+			StdOut.println("scanning fail");
+			showIdTypingScreen();
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
+	}
+	
+	public void showScanCopyFailed()
+	{
+		try{
+			StdOut.println("scanning fail");
+			showCopyTypingScreen();
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
+	}
+	
+	public void showCardIdUnregistered()
+	{
+		try{
+			StdOut.println("id number unregistered, please contact IT department");
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
+	}
+	
+	public void showCopyIdUnregistered()
+	{
+		try{
+			StdOut.println("Copy id is unregistered, please contact the manager");
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
+	}
+	
+	public void showCopyDueDate(ArrayList<CopyDue> due)
+	{
+		try{
+			StdOut.println("Check Out Complete");
+			if(due != null)
+			{
+				Iterator<CopyDue> dueIter = due.iterator();
+				while(dueIter.hasNext())
+				{
+					CopyDue tempDue = dueIter.next();
+					StdOut.println("<"+tempDue.getCopyTitle()+"> will due at "+tempDue.getDueDate());
+				}
+			}
+			else
+			{
+				StdOut.println("Error: [showCopyDueDate] parameter is null");
+			}
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
+	}
+	
+	private int captureUserSelection(int optionAmount, boolean minusAllowed)
+	{
+		try{
+			int userSelection = Integer.parseInt(StdIn.readString());
+			int restriction = MINIMUMSECTION;
+			if(minusAllowed == true){
+				restriction = MINUSLIMIT;
+			}
+			while(userSelection < restriction || userSelection > optionAmount)
 			{
 				StdOut.println("Invalid option, try again");
-				userSelection = StdIn.readInt();
+				userSelection = Integer.parseInt(StdIn.readString());
 			}
 			return userSelection;
 			
@@ -302,9 +375,9 @@ public class View {
 	{
 		try{
 			String userInput = StdIn.readString();
-			while(userInput.length() > MAXIMUMINPUTLENGTH)
+			while(userInput.length() > MAXIMUMINPUTLENGTH || userInput.length() == 0)
 			{
-				StdOut.println("Input is too long");
+				StdOut.println("Input is invalid");
 				userInput = StdIn.readString();
 			}
 			return userInput;
@@ -314,7 +387,50 @@ public class View {
 		return null;
 		
 	}
+
+	public void showCopyUnavailable(String copyID, String title) {
+		try{
+			StdOut.println(copyID+" "+title+" is rented out");
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
+	}
+
+	public void showCheckInCompleted(String copyID, String title) {
+		try{
+			StdOut.println(copyID+" <"+title+"> is checked in");
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
+		
+	}
+
+	public void showCopyIsInStock() {
+		try{
+			StdOut.println("the Copy is in stock");
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
+	}
 	
+}
+
+class CopyDue
+{
+	private String copyTitle;
+	private String dueDate;
+	public String getCopyTitle() {
+		return copyTitle;
+	}
+	public void setCopyTitle(String copyTitle) {
+		this.copyTitle = copyTitle;
+	}
+	public String getDueDate() {
+		return dueDate;
+	}
+	public void setDueDate(String dueDate) {
+		this.dueDate = dueDate;
+	}
 }
 
 class HistoryRecord
