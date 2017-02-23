@@ -32,6 +32,10 @@ public class Controller implements UserInputProcessor {
 		try{
 			if(view != null)
 			{
+				if(currentCheckOutList == null)
+				{
+					currentCheckOutList = new ArrayList<Copy>();
+				}
 				currentProcess = CHECKOUTPROCESS;
 				view.showIdScanningScreen();
 			}
@@ -136,8 +140,15 @@ public class Controller implements UserInputProcessor {
 					HistoryRecord tempHistoryRecord = new HistoryRecord();
 					tempHistoryRecord.setCopyId(tempRecord.getCopy().getCopyID());
 					tempHistoryRecord.setCopyTitle(tempRecord.getCopy().getTitle());
-					String dueTime = dateLongtoString(tempRecord.getDueTime());
-					tempHistoryRecord.setDueDate(dueTime);
+					if(tempRecord.isReturned())
+					{
+						tempHistoryRecord.setDueDate("returned");
+					}
+					else
+					{
+						String dueTime = dateLongtoString(tempRecord.getDueTime());
+						tempHistoryRecord.setDueDate(dueTime);
+					}
 					historyRecList.add(tempHistoryRecord);
 				}
 				view.showHistoryRecords(historyRecList);
@@ -240,12 +251,13 @@ public class Controller implements UserInputProcessor {
 					for(int i=0; i<recordList.size(); i++)
 					{
 						Record tempRecord = recordList.get(i);
-						if(tempRecord.getCopy().getCopyID().equals(copyId))
+						if(tempRecord.getCopy().getCopyID().equals(copyId) && !tempRecord.isReturned())
 						{
 							recordList.get(i).setReturned(true);
 							break;
 						}
 					}
+					model.updatePatron(holder);
 					model.updateCopyInstockStatus(copyId, true);
 					model.updateCopyCurrentHolder(copyId, null);
 					model.updateCopyPreviousHolder(copyId, holder);
@@ -322,10 +334,6 @@ public class Controller implements UserInputProcessor {
 	private void addCopytoCurrentCheckOutList(Copy newCopy)
 	{
 		try{
-			if(currentCheckOutList == null)
-			{
-				currentCheckOutList = new ArrayList<Copy>();
-			}
 			currentCheckOutList.add(newCopy);
 			
 		}catch(Exception e){
@@ -355,7 +363,9 @@ public class Controller implements UserInputProcessor {
 				{
 					if(i == (copyNumber-1))
 					{
+						model.updateCopyInstockStatus(currentCheckOutList.get(i).getCopyID(), true);
 						currentCheckOutList.remove(i);
+						
 					}
 				}
 			}
@@ -392,7 +402,7 @@ public class Controller implements UserInputProcessor {
 				}
 				
 				model.updatePatron(currentPatron);
-				view.showCopyDueDate(copyDueList);
+				view.showCheckOutCompleteScreen(copyDueList);
 				cleanSessionDate();
 			}
 		}catch(Exception e){

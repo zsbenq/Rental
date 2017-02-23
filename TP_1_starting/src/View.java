@@ -11,6 +11,7 @@ public class View {
 	private static final int COPYSCANNINGSELECTIONS = 3;
 	private static final int CHECKOUTSELECTIONS = 2;
 	private static final String SPLITLINE = "******************";
+	private static final String TABLEDASHLINE = "------------------------------";
 	
 	public void bindUserInputProcessor(UserInputProcessor processor){
 		this.userInputProcessor = processor;
@@ -19,7 +20,7 @@ public class View {
 	public void showMainScreen()
 	{
 		try{
-			StdOut.println(SPLITLINE+"Welcome"+SPLITLINE);
+			StdOut.println(SPLITLINE);
 			StdOut.println("Press '1' Check In");
 			StdOut.println("Press '2' Check Out");
 			StdOut.println("Press '3' Show Patron's Record");
@@ -58,8 +59,8 @@ public class View {
 	{
 		try{
 			StdOut.println("Scanning Id...");
-			StdOut.println("(Press '1' Simulate a successful scanning)");
-			StdOut.println("(Press '2' Simulate a failed scanning)");
+			StdOut.println("(Press '1' Simulate a scanning of Jimmy)");
+			StdOut.println("(Press '2' Simulate a scanning of Tom)");
 			StdOut.println("(Press '3' Enter ID Number)");
 			
 			dispatchIdScanningProcessor();
@@ -75,10 +76,11 @@ public class View {
 			Scanner scanner = new Scanner();
 			switch (userSelection){
 			case 1:
-				scanner.generateSuccessfulIdDemo();
+				scanner.generateSuccessfulIdDemoJimmy();
 				userInputProcessor.scanIdCard(scanner);
 				break;
 			case 2:
+				scanner.generateSuccessfulIdDemoTom();
 				userInputProcessor.scanIdCard(scanner);
 				break;
 			case 3: 
@@ -129,8 +131,8 @@ public class View {
 	{
 		try{
 			StdOut.println("Scanning Copy...");
-			StdOut.println("(Press '1' Simulate a successful scanning)");
-			StdOut.println("(Press '2' Simulate a failed scanning)");
+			StdOut.println("(Press '1' Simulate a scanning of Copy1)");
+			StdOut.println("(Press '2' Simulate a scanning of Copy2)");
 			StdOut.println("(Press '3' Enter Copy id)");
 			
 			dispatchCopyScanningScreenProcessor();
@@ -146,10 +148,11 @@ public class View {
 			Scanner scanner = new Scanner();
 			switch (userSelection){
 			case 1:
-				scanner.generateSuccessfulCopyDemo();
+				scanner.generateSuccessfulCopyDemo1();
 				userInputProcessor.scanCopy(scanner);
 				break;
 			case 2:
+				scanner.generateSuccessfulCopyDemo2();
 				userInputProcessor.scanCopy(scanner);
 				break;
 			case 3: 
@@ -197,9 +200,9 @@ public class View {
 	public void showPatronInfo(String patronName, String patronId)
 	{
 		try{
-			StdOut.println(SPLITLINE);
-			StdOut.println("name: " + patronName);
-			StdOut.println("id: " + patronId);
+			StdOut.println(TABLEDASHLINE);
+			StdOut.println("Name: " + patronName);
+			StdOut.println("Id: " + patronId);
 		}catch(Exception e){
 			System.err.println(e.getMessage());
 		}
@@ -210,6 +213,7 @@ public class View {
 		try{
 			if(historyRecord != null)
 			{
+				StdOut.println(TABLEDASHLINE);
 				StdOut.println("History records:");
 				Iterator<HistoryRecord> recordIter = historyRecord.iterator();
 				while(recordIter.hasNext())
@@ -217,6 +221,7 @@ public class View {
 					HistoryRecord tempRecord = recordIter.next();
 					StdOut.println("<"+tempRecord.getCopyTitle()+">   "+tempRecord.getCopyId()+" due "+tempRecord.getDueDate());
 				}
+				StdOut.println(TABLEDASHLINE);
 			}
 			else
 			{
@@ -232,6 +237,7 @@ public class View {
 		try{
 			if(outItems != null)
 			{
+				StdOut.println(TABLEDASHLINE);
 				StdOut.println("Checking Out:");
 				Iterator<CheckOutItem> itemIter = outItems.iterator();
 				while(itemIter.hasNext())
@@ -239,6 +245,7 @@ public class View {
 					CheckOutItem tempItem = itemIter.next();
 					StdOut.println(tempItem.getItemNumber()+".   <"+tempItem.getItemTitle()+">   "+tempItem.getItemAuthor());
 				}
+				StdOut.println(TABLEDASHLINE);
 			}
 			else
 			{
@@ -252,9 +259,9 @@ public class View {
 	public void showCheckOutOption()
 	{
 		try{
-			StdOut.println("Press '1' to continue scan");
-			StdOut.println("Press '2' to complete check out");
-			StdOut.println("Input '-1' to remove item 1., '-2' to remove item 2, etc.");
+			StdOut.println("(Press '1' to continue scan)");
+			StdOut.println("(Press '2' to complete check out)");
+			StdOut.println("(Input '-1' to remove item 1, '-2' to remove item 2, etc.)");
 			
 			dispatchCheckOutOptionProcessor();
 		}catch(Exception e){
@@ -328,9 +335,10 @@ public class View {
 		}
 	}
 	
-	public void showCopyDueDate(ArrayList<CopyDue> due)
+	public void showCheckOutCompleteScreen(ArrayList<CopyDue> due)
 	{
 		try{
+			StdOut.println(TABLEDASHLINE);
 			StdOut.println("Check Out Complete");
 			if(due != null)
 			{
@@ -340,6 +348,7 @@ public class View {
 					CopyDue tempDue = dueIter.next();
 					StdOut.println("<"+tempDue.getCopyTitle()+"> will due at "+tempDue.getDueDate());
 				}
+				StdOut.println(TABLEDASHLINE);
 			}
 			else
 			{

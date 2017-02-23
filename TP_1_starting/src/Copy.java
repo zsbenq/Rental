@@ -3,7 +3,7 @@ public class Copy
 {
 	private String copyID = null;
 	private String condition = null;
-	private Patron previoutHolder = null;
+	private Patron previousHolder = null;
 	private Patron currentHolder = null;
 	private String title = null;
 	private String author = null;
@@ -23,11 +23,11 @@ public class Copy
 		this.condition = condition;
 	}
 
-	public Patron getPrevioutHolder() {
-		return previoutHolder;
+	public Patron getPreviousHolder() {
+		return previousHolder;
 	}
-	public void setPrevioutHolder(Patron previoutHolder) {
-		this.previoutHolder = previoutHolder;
+	public void setPreviousHolder(Patron previousHolder) {
+		this.previousHolder = previousHolder;
 	}
 	public Patron getCurrentHolder() {
 		return currentHolder;

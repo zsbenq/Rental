@@ -6,19 +6,15 @@ public class Model {
 	public static final int SUCCESS = 1;
 	public static final int FAIL = 0;
 	public static final long DAYTIMELONG = 24*60*60*1000;
-	public Patron getPatronbyId(String id)
+	public Patron getPatronbyId(String patronId)
 	{
-		ArrayList<Patron> patronsInStorage = Storage.getInstance().getAllPatrons();
-		//TODO implementation
-		return null;
+		return Storage.getInstance().getPatronbyId(patronId);
 		
 	}
 	
-	public Copy getCopybyId(String id)
+	public Copy getCopybyId(String copyId)
 	{
-		ArrayList<Copy> copiesInStorage = Storage.getInstance().getAllCopies();
-		//TODO implementation
-		return null;
+		return Storage.getInstance().getCopybyId(copyId);
 		
 	}
 	
@@ -40,19 +36,30 @@ public class Model {
 		return dueTime;
 	}
 
-	public void updateCopyPreviousHolder(String copyID, Patron previousHolder) {
-		// TODO Auto-generated method stub
+	public void updateCopyPreviousHolder(String copyId, Patron previousHolder) {
+		Copy targetCopy = Storage.getInstance().getCopybyId(copyId);
+		if(targetCopy != null)
+		{
+			targetCopy.setPreviousHolder(previousHolder);
+		}
 		
 	}
 
-	public void updateCopyCurrentHolder(String copyID, Patron currentHolder) {
-		// TODO Auto-generated method stub
+	public void updateCopyCurrentHolder(String copyId, Patron currentHolder) {
+		Copy targetCopy = Storage.getInstance().getCopybyId(copyId);
+		if(targetCopy != null)
+		{
+			targetCopy.setCurrentHolder(currentHolder);
+		}
 		
 	}
 
-	public void updateCopyInstockStatus(String copyID, boolean b) {
-		// TODO Auto-generated method stub
-		
+	public void updateCopyInstockStatus(String copyId, boolean isInStock) {
+		Copy targetCopy = Storage.getInstance().getCopybyId(copyId);
+		if(targetCopy != null)
+		{
+			targetCopy.setInStock(isInStock);
+		}
 	}
 	
 }
@@ -86,7 +93,7 @@ class Storage{
 		copyDemo1.setCondition("Good");
 		copyDemo1.setInStock(true);
 		copyDemo1.setTitle("Clean Code");
-		copyDemo1.setPrevioutHolder(patronDemoJimmy);
+		copyDemo1.setPreviousHolder(patronDemoJimmy);
 		copyDemo1.setCurrentHolder(null);
 		copyDemo1.setDueDays(30);
 		
@@ -95,7 +102,7 @@ class Storage{
 		copyDemo2.setCondition("New");
 		copyDemo2.setInStock(true);
 		copyDemo2.setTitle("Applying UML & Patterns");
-		copyDemo2.setPrevioutHolder(null);
+		copyDemo2.setPreviousHolder(null);
 		copyDemo2.setCurrentHolder(null);
 		copyDemo2.setDueDays(90);
 		
@@ -164,5 +171,31 @@ class Storage{
 	public ArrayList<Patron> getAllPatrons()
 	{
 		return storedPatrons;
+	}
+	
+	public Copy getCopybyId(String copyId)
+	{
+		Copy targetCopy = null;
+		for(int i=0; i<storedCopies.size(); i++)
+		{
+			if(storedCopies.get(i).getCopyID().equals(copyId))
+			{
+				targetCopy = storedCopies.get(i);
+			}
+		}
+		return targetCopy;
+	}
+	
+	public Patron getPatronbyId(String patronId)
+	{
+		Patron targetPatron = null;
+		for(int i=0; i<storedPatrons.size(); i++)
+		{
+			if(storedPatrons.get(i).getPatronID().equals(patronId))
+			{
+				targetPatron = storedPatrons.get(i);
+			}
+		}
+		return targetPatron;
 	}
 }
